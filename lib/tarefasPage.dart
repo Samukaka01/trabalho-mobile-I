@@ -1,135 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas/dataset.dart';
-import 'package:tarefas/minhasTarefas.dart';
-import 'package:tarefas/tarefasPage.dart';
-import 'package:tarefas/funcionariosPage.dart';
+import 'package:tarefas/main.dart'; 
+// Note: 'dart:developer' não é necessário neste arquivo
 
-// Variável Global _selectedIndex e função carregarPagina removidas
-// A gestão da navegação será feita dentro da classe MainScreen
-
-
-void main() => runApp(const MyAppTarefas());
-
-class MyAppTarefas extends StatelessWidget {
-  const MyAppTarefas({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Sistema de Gestão de Tarefas',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          colorSchemeSeed: Colors.blue,
-          useMaterial3: true),
-      home: const MainScreen(),
-    );
-  }
-}
-
-// =================================================================
-// WIDGET: MainScreen (Gerencia a navegação com BottomNavigationBar)
-// =================================================================
-
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
-
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _widgetOptions = <Widget>[
-    const HomePageTarefas(title: 'Dashboard de Tarefas'),
-    MinhasTarefasPage(title: 'Minhas Tarefas'),
-    const TarefasPage(title: 'Gestão de Tarefas'),
-    const FuncionariosPage(),
-  ];
-
-  final List<String> _titles = <String>[
-    'Dashboard de Tarefas',
-    'Minhas Tarefas',
-    'Gestão de Tarefas',
-    'Funcionários',
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_titles[_selectedIndex])),
-      body: Center(
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: _widgetOptions,
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            label: 'Home',
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
-          ),
-          BottomNavigationBarItem(
-            label: 'Minhas Tarefas',
-            icon: Icon(Icons.assignment_turned_in_outlined),
-            activeIcon: Icon(Icons.assignment_turned_in),
-          ),
-          BottomNavigationBarItem(
-            label: 'Gestão de Tarefas',
-            icon: Icon(Icons.add_task),
-            activeIcon: Icon(Icons.task),
-          ),
-          BottomNavigationBarItem(
-            label: 'Funcionários',
-            icon: Icon(Icons.people_alt_outlined),
-            activeIcon: Icon(Icons.people_alt),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// =================================================================
-// HomePageTarefas (APLICADO O ESTILO Card/ExpansionTile)
-// =================================================================
-
-class HomePageTarefas extends StatelessWidget {
+class TarefasPage extends StatefulWidget {
   final String title;
 
-  const HomePageTarefas({super.key, required this.title});
+  const TarefasPage({super.key, required this.title});
 
   @override
+  State<TarefasPage> createState() => _TarefasPageState();
+}
+
+class _TarefasPageState extends State<TarefasPage> {
+  @override
   Widget build(BuildContext context) {
+    // A tela inteira agora é apenas o corpo do Scaffold
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
         child: ListView.builder(
-          itemCount: tarefas.length,
+          itemCount: tarefas.length, // Usando a lista global do main.dart
           itemBuilder: (BuildContext context, int index) {
             final tarefa = tarefas[index];
-            
+
             final dataVencimentoFormatada = tarefa.dataVencimentoTarefa != null 
               ? '${tarefa.dataVencimentoTarefa!.day}/${tarefa.dataVencimentoTarefa!.month}/${tarefa.dataVencimentoTarefa!.year}' 
               : 'N/A';
-              
-            // APLICAÇÃO DO CARD E EXPANSION TILE DA TAREFAS PAGE
+
+            // 🛑 FIX: O retorno do Card é obrigatório para exibir o item.
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: ExpansionTile(
-                // O Ícone da estrela (nível) foi movido para o Leading do título
+                // Ícone de Nível da Tarefa
                 leading: Icon(
                     tarefa.nivelTarefa == 1
                         ? Icons.star
@@ -156,6 +59,7 @@ class HomePageTarefas extends StatelessWidget {
                     ),
                   ],
                 ),
+                // Corpo com detalhes da Tarefa
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -171,7 +75,8 @@ class HomePageTarefas extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Funcionário Responsável: ${tarefa.funcionario}',
+                          // 🛑 FIX: Acessando a propriedade 'nome' do objeto Funcionario
+                          'Funcionário Responsável: ${tarefa.funcionario}', 
                           style: const TextStyle(fontStyle: FontStyle.normal),
                         ),
                         const SizedBox(height: 10),
@@ -222,5 +127,6 @@ class HomePageTarefas extends StatelessWidget {
         ),
       ),
     );
+    
   }
 }
