@@ -164,7 +164,7 @@ class HomePageTarefas extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Funcionário Responsável: ${tarefa.funcionario}',
+                          'Funcionário Responsável: ${tarefa.funcionario.nome}',
                           style: const TextStyle(fontStyle: FontStyle.normal),
                         ),
                         const SizedBox(height: 10),
