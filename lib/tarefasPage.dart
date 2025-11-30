@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas/dataset.dart';
 import 'package:tarefas/main.dart'; 
-// Note: 'dart:developer' não é necessário neste arquivo
+
 
 class TarefasPage extends StatefulWidget {
   final String title;
@@ -15,7 +15,6 @@ class TarefasPage extends StatefulWidget {
 class _TarefasPageState extends State<TarefasPage> {
   @override
   Widget build(BuildContext context) {
-    // A tela inteira agora é apenas o corpo do Scaffold
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
@@ -27,12 +26,9 @@ class _TarefasPageState extends State<TarefasPage> {
             final dataVencimentoFormatada = tarefa.dataVencimentoTarefa != null 
               ? '${tarefa.dataVencimentoTarefa!.day}/${tarefa.dataVencimentoTarefa!.month}/${tarefa.dataVencimentoTarefa!.year}' 
               : 'N/A';
-
-            // 🛑 FIX: O retorno do Card é obrigatório para exibir o item.
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: ExpansionTile(
-                // Ícone de Nível da Tarefa
                 leading: Icon(
                     tarefa.nivelTarefa == 1
                         ? Icons.star
@@ -59,7 +55,6 @@ class _TarefasPageState extends State<TarefasPage> {
                     ),
                   ],
                 ),
-                // Corpo com detalhes da Tarefa
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -75,7 +70,6 @@ class _TarefasPageState extends State<TarefasPage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          // 🛑 FIX: Acessando a propriedade 'nome' do objeto Funcionario
                           'Funcionário Responsável: ${tarefa.funcionario}', 
                           style: const TextStyle(fontStyle: FontStyle.normal),
                         ),

@@ -4,10 +4,6 @@ import 'package:tarefas/minhasTarefas.dart';
 import 'package:tarefas/tarefasPage.dart';
 import 'package:tarefas/funcionariosPage.dart';
 
-// Variável Global _selectedIndex e função carregarPagina removidas
-// A gestão da navegação será feita dentro da classe MainScreen
-
-
 void main() => runApp(const MyAppTarefas());
 
 class MyAppTarefas extends StatelessWidget {
@@ -124,12 +120,9 @@ class HomePageTarefas extends StatelessWidget {
             final dataVencimentoFormatada = tarefa.dataVencimentoTarefa != null 
               ? '${tarefa.dataVencimentoTarefa!.day}/${tarefa.dataVencimentoTarefa!.month}/${tarefa.dataVencimentoTarefa!.year}' 
               : 'N/A';
-              
-            // APLICAÇÃO DO CARD E EXPANSION TILE DA TAREFAS PAGE
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: ExpansionTile(
-                // O Ícone da estrela (nível) foi movido para o Leading do título
                 leading: Icon(
                     tarefa.nivelTarefa == 1
                         ? Icons.star
