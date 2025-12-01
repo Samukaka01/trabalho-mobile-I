@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas/dataset.dart';
-import 'package:tarefas/main.dart';
 import 'package:tarefas/tarefasFormPage.dart';
 
 

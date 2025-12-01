@@ -34,8 +34,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // Variáveis removidas: _widgetOptions e _recarregarInfos (são recriadas no build)
-
   final List<String> _titles = <String>[
     'Dashboard de Tarefas',
     'Minhas Tarefas',
@@ -49,26 +47,15 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  // O método initState não é mais necessário para inicializar _widgetOptions.
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // ... código removido ...
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // 1. Função de callback que força o MainScreen a reconstruir
     void recarregarInfos() {
       setState(() {});
     }
 
-    // 2. A lista de widgets é criada dentro do build() e não usa 'const'
     final List<Widget> _widgetOptions = <Widget>[
-      // O 'const' foi removido para que o widget seja recriado (lendo a lista global atualizada)
       HomePageTarefas(title: 'Dashboard de Tarefas'), 
       MinhasTarefasPage(title: 'Minhas Tarefas'),
-      // Passamos a função recarregarInfos como callback
       TarefasPage(title: 'Gestão de Tarefas', onTaskAdded: recarregarInfos), 
       const FuncionariosPage(),
     ];
@@ -120,19 +107,17 @@ class _MainScreenState extends State<MainScreen> {
 class HomePageTarefas extends StatelessWidget {
   final String title;
 
-  // NOTA: O 'const' foi removido da MainScreen. 
-  // O Widget continua sendo StatelessWidget, mas é criado novamente no MainScreen.build().
-  HomePageTarefas({super.key, required this.title}); 
+
+  const HomePageTarefas({super.key, required this.title}); 
 
   @override
   Widget build(BuildContext context) {
     debugPrint('RASTREIO 3: HomePageTarefas (Dashboard) reconstruiu. Total Tarefas: ${listaTarefas.length}');
     
-    // O código de ordenação e visualização permanece o mesmo,
-    // garantindo que ele sempre leia o estado atual da listaTarefas global.
+
     final List<Tarefa> sortedTarefas = List<Tarefa>.from(listaTarefas);
     sortedTarefas.sort((a, b) {
-      // Adicionado tratamento de null-safety para dataVencimentoTarefa, caso exista algum item sem data
+
       if (a.dataVencimentoTarefa == null) return 1;
       if (b.dataVencimentoTarefa == null) return -1;
       return a.dataVencimentoTarefa!.compareTo(b.dataVencimentoTarefa!);
@@ -146,8 +131,6 @@ class HomePageTarefas extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             final tarefa = sortedTarefas[index];
             
-
-            // ✅ CORRIGIDO: Removida a verificação de nulo redundante.
             final dataVencimentoFormatada =
                 '${tarefa.dataVencimentoTarefa!.day}/${tarefa.dataVencimentoTarefa!.month}/${tarefa.dataVencimentoTarefa!.year}';
 
