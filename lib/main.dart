@@ -4,19 +4,18 @@ import 'package:tarefas/minhasTarefas.dart';
 import 'package:tarefas/tarefasPage.dart';
 import 'package:tarefas/funcionariosPage.dart';
 
-void main() => runApp(const MyAppTarefas());
 
-class MyAppTarefas extends StatelessWidget {
-  const MyAppTarefas({super.key});
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sistema de Gestão de Tarefas',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          colorSchemeSeed: Colors.blue,
-          useMaterial3: true),
+      theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
       home: const MainScreen(),
     );
   }
@@ -28,7 +27,6 @@ class MyAppTarefas extends StatelessWidget {
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
-
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -36,12 +34,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _widgetOptions = <Widget>[
-    const HomePageTarefas(title: 'Dashboard de Tarefas'),
-    MinhasTarefasPage(title: 'Minhas Tarefas'),
-    const TarefasPage(title: 'Gestão de Tarefas'),
-    const FuncionariosPage(),
-  ];
+  // Variáveis removidas: _widgetOptions e _recarregarInfos (são recriadas no build)
 
   final List<String> _titles = <String>[
     'Dashboard de Tarefas',
@@ -56,14 +49,36 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  // O método initState não é mais necessário para inicializar _widgetOptions.
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // ... código removido ...
+  // }
+
   @override
   Widget build(BuildContext context) {
+    // 1. Função de callback que força o MainScreen a reconstruir
+    void recarregarInfos() {
+      setState(() {});
+    }
+
+    // 2. A lista de widgets é criada dentro do build() e não usa 'const'
+    final List<Widget> _widgetOptions = <Widget>[
+      // O 'const' foi removido para que o widget seja recriado (lendo a lista global atualizada)
+      HomePageTarefas(title: 'Dashboard de Tarefas'), 
+      MinhasTarefasPage(title: 'Minhas Tarefas'),
+      // Passamos a função recarregarInfos como callback
+      TarefasPage(title: 'Gestão de Tarefas', onTaskAdded: recarregarInfos), 
+      const FuncionariosPage(),
+    ];
+
     return Scaffold(
       appBar: AppBar(title: Text(_titles[_selectedIndex])),
       body: Center(
         child: IndexedStack(
           index: _selectedIndex,
-          children: _widgetOptions,
+          children: _widgetOptions, // Usa a lista recriada no build
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -105,31 +120,48 @@ class _MainScreenState extends State<MainScreen> {
 class HomePageTarefas extends StatelessWidget {
   final String title;
 
-  const HomePageTarefas({super.key, required this.title});
+  // NOTA: O 'const' foi removido da MainScreen. 
+  // O Widget continua sendo StatelessWidget, mas é criado novamente no MainScreen.build().
+  HomePageTarefas({super.key, required this.title}); 
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('RASTREIO 3: HomePageTarefas (Dashboard) reconstruiu. Total Tarefas: ${listaTarefas.length}');
+    
+    // O código de ordenação e visualização permanece o mesmo,
+    // garantindo que ele sempre leia o estado atual da listaTarefas global.
+    final List<Tarefa> sortedTarefas = List<Tarefa>.from(listaTarefas);
+    sortedTarefas.sort((a, b) {
+      // Adicionado tratamento de null-safety para dataVencimentoTarefa, caso exista algum item sem data
+      if (a.dataVencimentoTarefa == null) return 1;
+      if (b.dataVencimentoTarefa == null) return -1;
+      return a.dataVencimentoTarefa!.compareTo(b.dataVencimentoTarefa!);
+    });
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
         child: ListView.builder(
-          itemCount: tarefas.length,
+          itemCount: sortedTarefas.length,
           itemBuilder: (BuildContext context, int index) {
-            final tarefa = tarefas[index];
+            final tarefa = sortedTarefas[index];
             
-            final dataVencimentoFormatada = tarefa.dataVencimentoTarefa != null 
-              ? '${tarefa.dataVencimentoTarefa!.day}/${tarefa.dataVencimentoTarefa!.month}/${tarefa.dataVencimentoTarefa!.year}' 
-              : 'N/A';
+
+            // ✅ CORRIGIDO: Removida a verificação de nulo redundante.
+            final dataVencimentoFormatada =
+                '${tarefa.dataVencimentoTarefa!.day}/${tarefa.dataVencimentoTarefa!.month}/${tarefa.dataVencimentoTarefa!.year}';
+
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: ExpansionTile(
                 leading: Icon(
-                    tarefa.nivelTarefa == 1
-                        ? Icons.star
-                        : tarefa.nivelTarefa == 2
-                            ? Icons.star_half
-                            : Icons.star_border,
-                    color: Colors.blue),
+                  tarefa.nivelTarefa == 1
+                      ? Icons.star
+                      : tarefa.nivelTarefa == 2
+                          ? Icons.star_half
+                          : Icons.star_border,
+                  color: Colors.blue,
+                ),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -194,9 +226,7 @@ class HomePageTarefas extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Data de Criação da Tarefa: ${tarefa.dataTarefaCriada != null ?
-                            '${tarefa.dataTarefaCriada!.day}/${tarefa.dataTarefaCriada!.month}/${tarefa.dataTarefaCriada!.year}'
-                            : 'N/A'}',
+                          'Data de Criação da Tarefa: ${tarefa.dataTarefaCriada != null ? '${tarefa.dataTarefaCriada!.day}/${tarefa.dataTarefaCriada!.month}/${tarefa.dataTarefaCriada!.year}' : 'N/A'}',
                           style: const TextStyle(fontStyle: FontStyle.normal),
                         ),
                         const SizedBox(height: 10),

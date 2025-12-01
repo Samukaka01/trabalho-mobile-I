@@ -159,7 +159,7 @@ class Funcionario {
 }
 
 
-List<Tarefa> tarefas = [
+List<Tarefa> listaTarefas = [
   Tarefa.fromMap({
     "id": 101,
     "nome": "Implementar Feature X",
