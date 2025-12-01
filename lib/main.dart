@@ -54,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     final List<Widget> _widgetOptions = <Widget>[
-      HomePageTarefas(title: 'Dashboard de Tarefas'), 
+      HomePageTarefas(title: 'Tarefas Próximas'), 
       MinhasTarefasPage(title: 'Minhas Tarefas'),
       TarefasPage(title: 'Gestão de Tarefas', onTaskAdded: recarregarInfos), 
       const FuncionariosPage(),
