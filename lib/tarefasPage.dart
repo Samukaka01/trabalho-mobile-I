@@ -23,7 +23,7 @@ class _TarefasPageState extends State<TarefasPage> {
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
           child: ListView.builder(
             itemCount:
-                listaTarefas.length, // Usando a lista global do main.dart
+                listaTarefas.length, 
             itemBuilder: (BuildContext context, int index) {
               final tarefa = listaTarefas[index];
 
